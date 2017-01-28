@@ -1,4 +1,5 @@
 ## Baseball Savant Data Scraping
+Alan Kessler 
 
 #### Background
 
@@ -8,7 +9,6 @@ The website offers robust querying options. However, for predictive modeling/mac
 
 #### Table of Contents
 
-- [Data Scraping Notebook](scraper.pynb)
-- Metadata - Coming soon
-- Integration with Chadwick Baseball Bureau Register - Coming soon
+- [Data Scraping Notebook](scraper.ipynb)
+- [Metadata](metadata.md)
 - Query example - Coming soon
