@@ -1,5 +1,5 @@
 ## Baseball Savant Data Scraping
-Alan Kessler 
+Alan Kessler, ACAS MAAA 
 
 #### Background
 
@@ -12,3 +12,9 @@ The website offers robust querying options. However, for predictive modeling/mac
 - [Data Scraping Notebook](scraper.ipynb)
 - [Metadata](metadata.md)
 - Query example - Coming soon
+
+#### Disclaimer
+
+Scraping this data takes quite a while. I would suggest breaking up the loop by year or setting aside some time, making sure the machine pulling this data does not fall asleep. 
+
+As always, scraping data from the web may not be welcomed by the source and is important to keep in mind. 
