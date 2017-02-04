@@ -11,7 +11,6 @@ The website offers robust querying options. However, for predictive modeling/mac
 
 - [Data Scraping Notebook](scraper.ipynb)
 - [Metadata](metadata.md)
-- Query example - Coming soon
 
 #### Disclaimer
 
