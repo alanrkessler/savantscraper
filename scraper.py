@@ -1,4 +1,3 @@
-from __future__ import print_function
 '''
 Copyright (C) 2017
 Author: Alan Kessler
@@ -18,8 +17,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.'''
 
 # Baseball Savant Data Scraping
 
-import requests
-import os
 import pandas as pd
 import sqlite3
 from tqdm import tqdm
@@ -42,7 +39,6 @@ loc = ['Home', 'Road']
 
 # List of out combinations
 outl = ['0', '1', '2%7C3']
-alreadyPrinted = False
 # Year loop
 for year in tqdm(range(2008, 2017), desc = 'Years'):
     # Team loop
@@ -70,12 +66,11 @@ for year in tqdm(range(2008, 2017), desc = 'Years'):
                         while not successful:
                             try:
                                 # Read in query CSV as dataframe
-                                raise HTTPError(msg='Test error', url='http://fake.com', code=502, hdrs='', fp=None)
                                 data = pd.read_csv(link)
                                 # Rename player_name to denote that it is the batter
                                 data.rename(columns={'player_name': 'batter_name'}, inplace=True)
                                 # Append the dataframe to the data
-                                # pd.io.sql.to_sql(data, name='statcast', con=savant, if_exists='append')
+                                pd.io.sql.to_sql(data, name='statcast', con=savant, if_exists='append')
                                 successful = True
                             except (HTTPError, sqlite3.OperationalError) as e:
                                 # If there is an error, sleep and try one more time
