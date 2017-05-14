@@ -1,6 +1,10 @@
 ## Baseball Savant Data Scraping
 
 #### Metadata
+#### NOTE pitch_id was removed in 2017 and is no longer available
+#### See this article for an explanation of the changes and information about merging
+#### new data with old data:
+#### http://www.hardballtimes.com/research-notebook-new-format-for-statcast-data-export-at-baseball-savant/
 
 This metadata is collected from a variety of sources, in some cases verbatim. See References.  
 
@@ -21,11 +25,10 @@ This metadata is collected from a variety of sources, in some cases verbatim. Se
 	- `SC` Screwball
 	- `SI` Sinker
 	- `SL` Slider
-- `pitch_id`	- unique identifier for the pitch in a given game
 - `game_date`	- date game was played
-- `start_speed` - pitch speed in miles per hour, measured at the initial point, y0. The field y0 has changed at times but is not available on this source. 
-- `x0` - horizontal position of the pitch at y0
-- `z0` - vertical position of the pitch at y0
+- `release_speed` - pitch speed in miles per hour, measured at the initial point, y0. The field y0 has changed at times but is not available on this source. (renamed start_speed; note that it is now measured by StatCast, not PITCHf/x
+- `release_pos_x` - horizontal position of the pitch at y0 (renamed x0)
+- `release_pos_z` - vertical position of the pitch at y0 (renamed z0)
 - `batter_name` - name of batter
 - `batter` - MLB ID of batter	
 - `pitcher` - MLB ID of pitcher	
@@ -75,9 +78,9 @@ This metadata is collected from a variety of sources, in some cases verbatim. Se
 	- Swinging Strike
 	- Swinging Strike (Blocked)
 - `spin_dir` - direction of spin in degrees
-- `spin_rate` - ball spin in revolutions per minute
-- `break_angle`	- the angle, in degrees, from vertical to the straight line path from the release point to where the pitch crossed the front of home plate, as seen from the catcher’s/umpire’s perspective
-- `break_length` - the measurement of the greatest distance, in inches, between the trajectory of the pitch at any point between the release point and the front of home plate, and the straight line path from the release point and the front of home plate 	
+- `spin_rate_deprecated` - ball spin in revolutions per minute (renamed spin_rate)
+- `break_angle_deprecated` - the angle, in degrees, from vertical to the straight line path from the release point to where the pitch crossed the front of home plate, as seen from the catcher’s/umpire’s perspective (renamed break_angle)
+- `break_length_deprecated` - the measurement of the greatest distance, in inches, between the trajectory of the pitch at any point between the release point and the front of home plate, and the straight line path from the release point and the front of home plate (renamed break_length)
 - `zone` - mapping of where ball crosses the plate from the pitcher's perspective. The zone is divided up into a 3x3 grid. Zone 1 is high and inside to a left handed hitter, Zone 4 middle and inside, and Zone 9 would be low and outside. Zones 11, 12, 13, and 14 represent areas outside of the strike zone and follow the same left to right counting scheme.  
 - `des` - play-by-play description of the result of the at bat
 - `game_type` - type of game: `S` spring training, `R` regular season, `P` playoffs	
@@ -98,8 +101,8 @@ This metadata is collected from a variety of sources, in some cases verbatim. Se
 - `game_year` - year of game date	
 - `pfx_x` - the horizontal movement, in inches, of the pitch between the release point and home plate, as compared to a theoretical pitch thrown at the same speed with no spin-induced movement. This parameter is measured at y=40 feet regardless of the y0 value.	
 - `pfx_z` - the vertical movement, in inches, of the pitch between the release point and home plate, as compared to a theoretical pitch thrown at the same speed with no spin-induced movement. This parameter is measured at y=40 feet regardless of the y0 value.	
-- `px` - the left/right distance, in feet, of the pitch from the middle of the plate as it crossed home plate. The PITCHf/x coordinate system is oriented to the catcher’s/umpire’s perspective, with distances to the right being positive and to the left being negative.	
-- `pz` - the height of the pitch in feet as it crossed the front of home plate.	
+- `plate_x` - the left/right distance, in feet, of the pitch from the middle of the plate as it crossed home plate. The PITCHf/x coordinate system is oriented to the catcher’s/umpire’s perspective, with distances to the right being positive and to the left being negative. (renamed px)
+- `plate_z` - the height of the pitch in feet as it crossed the front of home plate. (renamed pz)	
 - `on_3b` - MLB ID of runner on third base. Null if no runner.
 - `on_2b` - MLB ID of runner on second base. Null if no runner.
 - `on_1b` - MLB ID of runner on first base. Null if no runner.
@@ -108,9 +111,9 @@ This metadata is collected from a variety of sources, in some cases verbatim. Se
 - `inning_topbot` - half inning indicator: `top` top or `bot` bottom
 - `hc_x` - horizontal location of batted ball (0 to 250). Bottom left corner of top down view of baseball field is (0, -250). Top right is (250, 0).
 - `hc_y` - shallow/deep location of batted ball (-250 to 0). Bottom left corner of top down view of baseball field is (0, -250). Top right is (250, 0).
-- `tfs` - UTC time
-- `tfs_zulu` - UTC timestamp	
-- `catcher` - MLB ID of catcher
+- `tfs_deprecated` - UTC time (renamed tfs)
+- `tfs_zulu_deprecated` - UTC timestamp	(renamed tfs_zulu)
+- `pos2_person_id` - MLB ID of catcher (renamed catcher)
 - `umpire` - MLB ID of umpire	
 - `sv_id` - a date/time stamp of when the PITCHf/x tracking system first detected the pitch in the air, it is in the format YYMMDD_hhmmss	
 - `vx0` - initial horizontal velociy of pitch in feet per second	
@@ -122,8 +125,8 @@ This metadata is collected from a variety of sources, in some cases verbatim. Se
 - `sz_top` - the distance in feet from the ground to the top of the current batter’s rulebook strike zone as measured from the video by the PITCHf/x operator. The operator sets a line at the batter’s belt as he settles into the hitting position, and the PITCHf/x software adds four inches up for the top of the zone.
 - `sz_bot` - the distance in feet from the ground to the bottom of the current batter’s rulebook strike zone. The PITCHf/x operator sets a line at the hollow of the knee for the bottom of the zone.	
 - `hit_distance_sc` - hit distance in feet
-- `hit_speed` - exit velocity in mph	
-- `hit_angle` - angle of ball hit in degrees
+- `launch_speed` - exit velocity in mph	(renamed hit_speed)
+- `launch_angle` - angle of ball hit in degrees (renamed hit_angle)
 - `effective_speed` - perceived velocity of pitch in mph
 - `release_spin_rate` - rate of spin after ball is released
 - `release_extension` - how much closer, in feet, the pitch is released compared to the rubber. 
