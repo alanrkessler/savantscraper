@@ -1,5 +1,7 @@
 ## Baseball Savant Data Scraping
-Alan Kessler, ACAS MAAA 
+Alan Kessler
+
+I would like the acknowledge the valuable contribution of [Joseph Petrich](https://github.com/jpetrich) improving the process and updating for 2017. 
 
 #### Background
 
