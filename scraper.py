@@ -1,3 +1,4 @@
+from __future__ import print_function
 '''
 Copyright (C) 2017
 Author: Alan Kessler
@@ -41,14 +42,13 @@ loc = ['Home', 'Road']
 
 # List of out combinations
 outl = ['0', '1', '2%7C3']
-
+alreadyPrinted = False
 # Year loop
 for year in tqdm(range(2008, 2017), desc = 'Years'):
     # Team loop
     for team in tqdm(teams, desc = 'Teams', leave = False):
         # Home/Away loop
         for home_away in tqdm(loc, desc = 'Location', leave = False):
-            # print "###\n### TEAM: " + team + "\n### " + home_away + "\n###"
             # Inning loop
             for inning in tqdm(range(1, 11), desc='Innings', leave=False):
                 # Outs loop
@@ -66,21 +66,22 @@ for year in tqdm(range(2008, 2017), desc = 'Years'):
                         &sort_order=desc&min_abs=0&xba_gt=&xba_lt=&px1=&px2=&pz1=&pz2=&ss_gt=&ss_lt=&is_barrel=&type=details&'
 
                         successful = False
-                        backoff_time = 10
+                        backoff_time = 30
                         while not successful:
                             try:
                                 # Read in query CSV as dataframe
+                                raise HTTPError(msg='Test error', url='http://fake.com', code=502, hdrs='', fp=None)
                                 data = pd.read_csv(link)
                                 # Rename player_name to denote that it is the batter
                                 data.rename(columns={'player_name': 'batter_name'}, inplace=True)
                                 # Append the dataframe to the data
-                                pd.io.sql.to_sql(data, name='statcast', con=savant, if_exists='append')
+                                # pd.io.sql.to_sql(data, name='statcast', con=savant, if_exists='append')
                                 successful = True
                             except (HTTPError, sqlite3.OperationalError) as e:
                                 # If there is an error, sleep and try one more time
-                                time.sleep(backoff_time)
+                                for i in tqdm(range(1, backoff_time), desc="Backing off " + str(backoff_time) + " seconds for error " + str(e) + " at " + str(year) + " " + outs + " " + team + " " + home_away + " " + str(inning), leave=False):
+                                    time.sleep(1)
                                 backoff_time = min(backoff_time * 2, 60*60)
-                                print "\n\n\n\nBacking off " + str(backoff_time) + " seconds for error " + str(e) + " at " + str(year) + " " + outs + " " + team + " " + home_away + " " + str(inning)
 
 # Commit and close connection
 savant.commit() 
