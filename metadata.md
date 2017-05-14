@@ -131,6 +131,21 @@ This metadata is collected from a variety of sources, in some cases verbatim. Se
 - `release_spin_rate` - rate of spin after ball is released
 - `release_extension` - how much closer, in feet, the pitch is released compared to the rubber. 
 - `game_pk` - related to the Game Day package
+- `pos1_person_id` - pitcher's MLB ID
+- `pos2_person_id.1` - catcher's MLB ID
+- `pos3_person_id` - first baseman's MLB ID
+- `pos4_person_id` - second basemen's MLB ID
+- `pos5_person_id` - third baseman's MLB ID
+- `pos6_person_id` - shortstop's MLB ID
+- `pos7_person_id` - left fielder's MLB ID
+- `pos8_person_id` - center fielder's MLB ID
+- `pos9_person_id` - right fielder's MLB ID
+- `estimated_ba_using_speedangle` - average BA on balls with a similar exit velocity and launch angle
+- `estimated_woba_using_speedangle` - average wOBA on balls with a similar exit velocity and launch angle
+- `woba_value` - potentially the wOBA numerator?
+- `woba_denom` - potentially the wOBA denominator?
+- `babip_value` - something having to do with batting average on balls in play?
+- `iso_value` - something having to do with isolated power?
 
 #### References 
 
