@@ -17,12 +17,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.'''
 
 # Baseball Savant Data Scraping
 
-import requests
-import os
 import pandas as pd
 import sqlite3
 from tqdm import tqdm
 import time
+from urllib2 import HTTPError
+
 
 # Connect to database
 savant = sqlite3.connect('BaseballSavant.db')
@@ -39,36 +39,44 @@ loc = ['Home', 'Road']
 
 # List of out combinations
 outl = ['0', '1', '2%7C3']
-
 # Year loop
 for year in tqdm(range(2008, 2017), desc = 'Years'):
     # Team loop
-    for team in teams:
+    for team in tqdm(teams, desc = 'Teams', leave = False):
         # Home/Away loop
-        for home_away in loc:
-            # Outs loop
-            for outs in outl:
-                # Inning loop
-                for inning in range(1,11):
-                    # Query link is based on loop input
-                    link = 'https://baseballsavant.mlb.com/statcast_search/csv?all=true&hfPT=&hfZ=&hfGT=R%7CPO%7CS%7C&hfPR=&hfAB=&stadium=&hfBBT=&hfBBL=&hfC=&season=' + str(year) + '&player_type=batter&hfOuts=' + outs + '%7C&pitcher_throws=&batter_stands=&start_speed_gt=&start_speed_lt=&perceived_speed_gt=&perceived_speed_lt=&spin_rate_gt=&spin_rate_lt=&exit_velocity_gt=&exit_velocity_lt=&launch_angle_gt=&launch_angle_lt=&distance_gt=&distance_lt=&batted_ball_angle_gt=&batted_ball_angle_lt=&game_date_gt=&game_date_lt=&team=' + team + '&position=&hfRO=&home_road=' + home_away + '&hfInn=' + str(inning) + '%7C&min_pitches=0&min_results=0&group_by=name&sort_col=pitches&player_event_sort=start_speed&sort_order=desc&min_abs=0&xba_gt=&xba_lt=&px1=&px2=&pz1=&pz2=&ss_gt=&ss_lt=&is_barrel=&type=details&'
-                    try:
-                        # Read in query CSV as dataframe
-                        data = pd.read_csv(link)
-                    except HTTPError:
-                        # If there is an error, sleep and try one more time
-                        time.sleep(10)
-                        # Read in query CSV as dataframe
-                        data = pd.read_csv(link)
-                    # Rename player_name to denote that it is the batter
-                    data.rename(columns={'player_name' : 'batter_name'}, inplace=True)
-                    # Append the dataframe to the data
-                    pd.io.sql.to_sql(data, name = 'statcast', con = savant, if_exists='append')
-                    
-# Delete any duplicate pitches
-s = savant.cursor()
+        for home_away in tqdm(loc, desc = 'Location', leave = False):
+            # Inning loop
+            for inning in tqdm(range(1, 11), desc='Innings', leave=False):
+                # Outs loop
+                for outs in tqdm(outl, desc = 'Outs', leave = False):
+                    # pitcher handedness
+                    for throws in ['R', 'L']:
+                        # Query link is based on loop input
+                        link = 'https://baseballsavant.mlb.com/statcast_search/csv?all=true\
+                        &hfGT=R%7CPO%7CS%7C&hfPR=\
+                        &season=' + str(year) + '&player_type=batter\
+                        &hfOuts=' + outs + '%7C&team=' + team + '&position=&hfRO=\
+                        &home_road=' + home_away + '&hfInn=' + str(inning) + '%7C&min_pitches=0\
+                        &pitcher_throws=' + throws + '&min_results=0&group_by=name&sort_col=pitches\
+                        &player_event_sort=start_speed\
+                        &sort_order=desc&min_abs=0&xba_gt=&xba_lt=&px1=&px2=&pz1=&pz2=&ss_gt=&ss_lt=&is_barrel=&type=details&'
 
-s.execute('''DELETE FROM statcast WHERE rowid NOT IN (SELECT MIN(rowid) FROM statcast GROUP BY game_pk, pitch_id, game_year, inning, outs_when_up)''')
+                        successful = False
+                        backoff_time = 30
+                        while not successful:
+                            try:
+                                # Read in query CSV as dataframe
+                                data = pd.read_csv(link)
+                                # Rename player_name to denote that it is the batter
+                                data.rename(columns={'player_name': 'batter_name'}, inplace=True)
+                                # Append the dataframe to the data
+                                pd.io.sql.to_sql(data, name='statcast', con=savant, if_exists='append')
+                                successful = True
+                            except (HTTPError, sqlite3.OperationalError) as e:
+                                # If there is an error, sleep and try one more time
+                                for i in tqdm(range(1, backoff_time), desc="Backing off " + str(backoff_time) + " seconds for error " + str(e) + " at " + str(year) + " " + outs + " " + team + " " + home_away + " " + str(inning), leave=False):
+                                    time.sleep(1)
+                                backoff_time = min(backoff_time * 2, 60*60)
 
 # Commit and close connection
 savant.commit() 
