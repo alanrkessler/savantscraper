@@ -1,6 +1,8 @@
 ## Baseball Savant Data Scraping
 Alan Kessler
 
+**Changes in the data structure are causing query errors for past years. A fix is being tested.**
+
 I would like the acknowledge the valuable contribution of [Joseph Petrich](https://github.com/jpetrich) improving the process and updating for 2017. 
 
 #### Background
