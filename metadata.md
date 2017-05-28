@@ -1,12 +1,10 @@
 ## Baseball Savant Data Scraping
 
 #### Metadata
-#### NOTE pitch_id was removed in 2017 and is no longer available
-#### See this article for an explanation of the changes and information about merging
-#### new data with old data:
-#### http://www.hardballtimes.com/research-notebook-new-format-for-statcast-data-export-at-baseball-savant/
 
 This metadata is collected from a variety of sources, in some cases verbatim. See References.  
+
+Significant changes were made in 2017 including removing pitch_id. This [article](http://www.hardballtimes.com/research-notebook-new-format-for-statcast-data-export-at-baseball-savant/) in the Hardball Times for details.
 
 - `pitch_type` - type of pitch based on a neural network classification:
 	- `CH` Changeup
@@ -115,7 +113,7 @@ This metadata is collected from a variety of sources, in some cases verbatim. Se
 - `tfs_zulu_deprecated` - UTC timestamp	(renamed tfs_zulu)
 - `pos2_person_id` - MLB ID of catcher (renamed catcher)
 - `umpire` - MLB ID of umpire	
-- `sv_id` - a date/time stamp of when the PITCHf/x tracking system first detected the pitch in the air, it is in the format YYMMDD_hhmmss	
+- `sv_id` - a date/time stamp of when the PITCHf/x tracking system first detected the pitch in the air, it is in the format YYMMDD_hhmmss	http://m.mlb.com/glossary/statcast
 - `vx0` - initial horizontal velociy of pitch in feet per second	
 - `vy0` - initial velocity of pitch in direction of batter in feet per second 	
 - `vz0` - initial vertical velocity of pitch in feet per second
@@ -154,3 +152,5 @@ This metadata is collected from a variety of sources, in some cases verbatim. Se
 [/r/Sabermetrics user rjweise](https://docs.google.com/document/d/1ztD20pt5K0HUi2EcJHT4SYdOZw9YPYhtLUmi8BpInuA/edit?pref=2&pli=1#heading=h.gjdgxs)
 
 [MLB Glossary - Statcast](http://m.mlb.com/glossary/statcast)
+
+[The Hardball Times - Research Notebook: New Format for Statcast Data Export at Baseball Savant](http://www.hardballtimes.com/research-notebook-new-format-for-statcast-data-export-at-baseball-savant/)
