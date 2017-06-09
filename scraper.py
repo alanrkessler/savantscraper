@@ -21,63 +21,35 @@ import pandas as pd
 import sqlite3
 from tqdm import tqdm
 import time
-from urllib2 import HTTPError
+from urllib.error import HTTPError
 
-
-# Connect to database
 savant = sqlite3.connect('BaseballSavant.db')
 
-# List of teams
-teams = ['LAA', 'HOU', 'OAK', 'TOR', 'ATL', 'MIL', 'STL', 
-         'CHC', 'ARI', 'LAD', 'SF', 'CLE', 'SEA', 'MIA', 
-         'NYM', 'WSH', 'BAL', 'SD', 'PHI', 'PIT', 'TEX', 
-         'TB', 'BOS', 'CIN', 'COL', 'KC', 'DET', 'MIN', 
+teams = ['LAA', 'HOU', 'OAK', 'TOR', 'ATL', 'MIL', 'STL',
+         'CHC', 'ARI', 'LAD', 'SF', 'CLE', 'SEA', 'MIA',
+         'NYM', 'WSH', 'BAL', 'SD', 'PHI', 'PIT', 'TEX',
+         'TB', 'BOS', 'CIN', 'COL', 'KC', 'DET', 'MIN',
          'CWS', 'NYY']
 
-# List of Home/Road
-loc = ['Home', 'Road']
-
-# List of out combinations
-outl = ['0', '1', '2%7C3']
-# Year loop
 for year in tqdm(range(2008, 2017), desc = 'Years'):
-    # Team loop
     for team in tqdm(teams, desc = 'Teams', leave = False):
-        # Home/Away loop
-        for home_away in tqdm(loc, desc = 'Location', leave = False):
-            # Inning loop
-            for inning in tqdm(range(1, 11), desc='Innings', leave=False):
-                # Outs loop
-                for outs in tqdm(outl, desc = 'Outs', leave = False):
-                    # pitcher handedness
-                    for throws in ['R', 'L']:
-                        # Query link is based on loop input
-                        link = 'https://baseballsavant.mlb.com/statcast_search/csv?all=true\
-                        &hfGT=R%7CPO%7CS%7C&hfPR=\
-                        &season=' + str(year) + '&player_type=batter\
-                        &hfOuts=' + outs + '%7C&team=' + team + '&position=&hfRO=\
-                        &home_road=' + home_away + '&hfInn=' + str(inning) + '%7C&min_pitches=0\
-                        &pitcher_throws=' + throws + '&min_results=0&group_by=name&sort_col=pitches\
-                        &player_event_sort=start_speed\
-                        &sort_order=desc&min_abs=0&xba_gt=&xba_lt=&px1=&px2=&pz1=&pz2=&ss_gt=&ss_lt=&is_barrel=&type=details&'
+        # Query link is based on loop
+        link = 'https://baseballsavant.mlb.com/statcast_search/csv?all=true&hfPT=&hfAB=&hfBBT=&hfPR=&hfZ=&stadium=&hfBBL=&hfNewZones=&hfGT=&hfC=&hfSea=' + str(year) + '%7C&hfSit=&player_type=pitcher&hfOuts=&opponent=&pitcher_throws=&batter_stands=&hfSA=&game_date_gt=&game_date_lt=&team=' + team + '&position=&hfRO=&home_road=&hfFlag=&metric_1=&hfInn=&min_pitches=0&min_results=0&group_by=name-event&sort_col=pitches&player_event_sort=api_p_release_speed&sort_order=desc&min_abs=0&type=details&'
+        successful = False
+        backoff_time = 30
+        while not successful:
+            try:
+                data = pd.read_csv(link)
+                # Rename player_name to denote that it is the pitcher
+                data.rename(columns={'player_name': 'pitcher_name'}, inplace=True)
+                # Insert to table
+                pd.io.sql.to_sql(data, name='statcast', con=savant, if_exists='append')
+                successful = True
+            except (HTTPError, sqlite3.OperationalError) as e:
+                # If there is an error backoff exponentially until there is no longer an error
+                for i in tqdm(range(1, backoff_time), desc="Backing off " + str(backoff_time) + " seconds", leave=False):
+                    time.sleep(1)
+                backoff_time = min(backoff_time * 2, 60*60)
 
-                        successful = False
-                        backoff_time = 30
-                        while not successful:
-                            try:
-                                # Read in query CSV as dataframe
-                                data = pd.read_csv(link)
-                                # Rename player_name to denote that it is the batter
-                                data.rename(columns={'player_name': 'batter_name'}, inplace=True)
-                                # Append the dataframe to the data
-                                pd.io.sql.to_sql(data, name='statcast', con=savant, if_exists='append')
-                                successful = True
-                            except (HTTPError, sqlite3.OperationalError) as e:
-                                # If there is an error, sleep and try one more time
-                                for i in tqdm(range(1, backoff_time), desc="Backing off " + str(backoff_time) + " seconds for error " + str(e) + " at " + str(year) + " " + outs + " " + team + " " + home_away + " " + str(inning), leave=False):
-                                    time.sleep(1)
-                                backoff_time = min(backoff_time * 2, 60*60)
-
-# Commit and close connection
-savant.commit() 
+savant.commit()
 savant.close()
