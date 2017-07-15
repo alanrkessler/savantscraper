@@ -31,7 +31,7 @@ teams = ['LAA', 'HOU', 'OAK', 'TOR', 'ATL', 'MIL', 'STL',
          'TB', 'BOS', 'CIN', 'COL', 'KC', 'DET', 'MIN',
          'CWS', 'NYY']
 
-for year in tqdm(range(2008, 2017), desc = 'Years'):
+for year in tqdm(range(2008, 2018), desc = 'Years'):
     for team in tqdm(teams, desc = 'Teams', leave = False):
         # Query link is based on loop
         link = 'https://baseballsavant.mlb.com/statcast_search/csv?all=true&hfPT=&hfAB=&hfBBT=&hfPR=&hfZ=&stadium=&hfBBL=&hfNewZones=&hfGT=&hfC=&hfSea=' + str(year) + '%7C&hfSit=&player_type=pitcher&hfOuts=&opponent=&pitcher_throws=&batter_stands=&hfSA=&game_date_gt=&game_date_lt=&team=' + team + '&position=&hfRO=&home_road=&hfFlag=&metric_1=&hfInn=&min_pitches=0&min_results=0&group_by=name-event&sort_col=pitches&player_event_sort=api_p_release_speed&sort_order=desc&min_abs=0&type=details&'
@@ -39,7 +39,7 @@ for year in tqdm(range(2008, 2017), desc = 'Years'):
         backoff_time = 30
         while not successful:
             try:
-                data = pd.read_csv(link)
+                data = pd.read_csv(link, low_memory=False)
                 # Rename player_name to denote that it is the pitcher
                 data.rename(columns={'player_name': 'pitcher_name'}, inplace=True)
                 # Insert to table
@@ -51,5 +51,7 @@ for year in tqdm(range(2008, 2017), desc = 'Years'):
                     time.sleep(1)
                 backoff_time = min(backoff_time * 2, 60*60)
 
+savant.commit()
+savant.execute("DELETE FROM statcast WHERE rowid NOT IN (SELECT MIN(rowid) FROM statcast GROUP BY sv_id, batter, pitcher)")
 savant.commit()
 savant.close()
