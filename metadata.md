@@ -140,10 +140,10 @@ Significant changes were made in 2017 including removing pitch_id. This [article
 - `pos9_person_id` - right fielder's MLB ID
 - `estimated_ba_using_speedangle` - average BA on balls with a similar exit velocity and launch angle
 - `estimated_woba_using_speedangle` - average wOBA on balls with a similar exit velocity and launch angle
-- `woba_value` - potentially the wOBA numerator?
-- `woba_denom` - potentially the wOBA denominator?
-- `babip_value` - something having to do with batting average on balls in play?
-- `iso_value` - something having to do with isolated power?
+- `woba_value` - wOBA numerator
+- `woba_denom` - wOBA denominator
+- `babip_value` - batting average ball on balls in play for the single event
+- `iso_value` - isolated power for the single event
 
 #### References 
 
