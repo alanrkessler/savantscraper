@@ -1,7 +1,5 @@
 # -*- coding: utf-8 -*-
-"""Load detail level Baseball Savant data into an SQLite database.
-
-"""
+"""Load detail level Baseball Savant data into an SQLite database."""
 
 import os
 from time import sleep
@@ -27,7 +25,6 @@ def savant_search(season, team, csv=False):
         HTTPError: if connection is unsuccessful multiple times.
 
     """
-
     # Define the number of times to retry on a connection error
     num_tries = 6
     # Define the starting backoff time to grow exponentially
@@ -35,9 +32,9 @@ def savant_search(season, team, csv=False):
 
     # Generate the URL to search based on team and year
     url = ("https://baseballsavant.mlb.com/statcast_search/csv?all=true"
-           "&hfPT=&hfAB=&hfBBT=&hfPR=&hfZ=&stadium=&hfBBL=&hfNewZones=&hfGT=&hfC="
-           f"&hfSea={season}%7C&hfSit=&player_type=pitcher&hfOuts=&opponent="
-           "&pitcher_throws=&batter_stands=&hfSA=&game_date_gt=&game_date_lt="
+           "&hfPT=&hfAB=&hfBBT=&hfPR=&hfZ=&stadium=&hfBBL=&hfNewZones=&hfGT=&h"
+           f"fC=&hfSea={season}%7C&hfSit=&player_type=pitcher&hfOuts=&opponent"
+           "=&pitcher_throws=&batter_stands=&hfSA=&game_date_gt=&game_date_lt="
            f"&hfInfield=&team={team}&position=&hfOutfield=&hfRO=&home_road="
            "&hfFlag=&hfPull=&metric_1=&hfInn=&min_pitches=0&min_results=0"
            "&group_by=name&sort_col=pitches&player_event_sort=h_launch_speed"
@@ -69,7 +66,7 @@ def savant_search(season, team, csv=False):
     return single_season_team
 
 
-def database_import(db_name, seasons_inc, teams=None, reload=True):
+def database_import(db_name, seasons, teams=None, reload=True):
     """Load detail-level Baseball Savant search results into SQLite database.
 
     Creates a database if it does not exist and loads all teams by default.
@@ -77,7 +74,7 @@ def database_import(db_name, seasons_inc, teams=None, reload=True):
 
     Args:
         db_name (str): name given to the SQLite database file.
-        seasons_inc (tuple): inclusive range of years to include.
+        seasons (tuple): inclusive range of years to include.
         teams (list): list of specific teams to include. Default is all.
         reload (bool): delete database with the same name.
 
@@ -88,7 +85,6 @@ def database_import(db_name, seasons_inc, teams=None, reload=True):
         HTTPError: if connection is unsuccessful multiple times.
 
     """
-
     # Delete the database if it exists based on argument
     if reload:
         try:
@@ -109,7 +105,7 @@ def database_import(db_name, seasons_inc, teams=None, reload=True):
 
     # Loop over seasons and teams
     # Append to statcast table at each iteration
-    for season in tqdm(range(seasons_inc[0], seasons_inc[1]+1), desc='Seasons'):
+    for season in tqdm(range(seasons[0], seasons[1]+1), desc='Seasons'):
         for team in tqdm(teams, desc='Teams', leave=False):
             single_season_team = savant_search(season, team)
             pd.io.sql.to_sql(single_season_team, name='statcast',

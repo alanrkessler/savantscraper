@@ -9,8 +9,8 @@ The website offers robust querying options. However, for predictive modeling/mac
 
 ------------------
 ## Resources
-- [Example Query Notebook](examples.ipynb)
-- [Metadata](https://baseballsavant.mlb.com/csv-docs#sv_id)
+-   [Example Query Notebook](examples.ipynb)
+-   [Metadata](https://baseballsavant.mlb.com/csv-docs#sv_id)
 
 ------------------
 ## Details
